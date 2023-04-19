@@ -16,7 +16,7 @@ class AutomationTest:
         self.months = months
         self.section = section
         self.search_phrase = search_phrase
-        self.data = []
+        self.list_data = []
         self.url_to_visit = 'https://www.nytimes.com/'
         self.driver = webdriver.Chrome(executable_path='./chromedriver')
 
@@ -36,16 +36,16 @@ class AutomationTest:
         section = self.get_requested_section()
 
         # Get the articles elements.
-        article_elements = self.visit_selected_section(section)
+        article_elements = self.extract_elements(section)
 
         # Parse the elements to get the information requested.
-        articles_information = self.parse_all_elements(article_elements)
+        articles_information = self.extract_needed_information(article_elements)
 
         # Create the excel file.
         self.create_excel_file(article_information=articles_information)
 
         # Close the driver.
-        automation.driver.quit()
+        driver.quit()
 
     def get_months_to_search(self):
         """This method will return the number
@@ -79,13 +79,36 @@ class AutomationTest:
             result.append(date_list)
         return result[::-1]
 
-    def get_section_dictionary(self):
-        """This method will return a dictionary of all
-        the sections on the nytimes.com homepage"""
+    def get_section(self):
+        """
+        This method will return the section list
+        """
+        driver = self.driver
+        driver.implicitly_wait(0)
+        driver.maximize_window()
+
+        # Visit the url
+        driver.get(self.url_to_visit)
         section_list = self.driver.find_element(
             By.XPATH,
             '//*[@id="app"]/div[2]/div[2]/header/div[4]'
             )
+        return section_list
+    
+    def get_section_list(self):
+        """This method will return a list of all
+        the sections on the nytimes.com homepage"""
+        section_list = self.get_section()
+        section_links = section_list.find_elements(By.TAG_NAME, 'a')
+        section_list_names = []
+        for section in section_links:
+            section_list_names.append(section.text)
+        return section_list_names
+
+    def get_section_dictionary(self):
+        """This method will return a dictionary of all
+        the sections on the nytimes.com homepage"""
+        section_list = self.get_section()
         section_links = section_list.find_elements(By.TAG_NAME, 'a')
         section_dict = {}
         for section in section_links:
@@ -100,10 +123,11 @@ class AutomationTest:
             raise Exception('Section not found')
         return section_dict[self.section]
 
-    def visit_selected_section(self, section):
+    def extract_elements(self, section):
         """This method will visit the requested section
         from the nytimes.com homepage"""
         self.driver.get(section)
+        time.sleep(20)
         dates = self.get_months_to_search()
         continue_controller = True
         article_counter = 1
@@ -132,15 +156,11 @@ class AutomationTest:
                         f'//*[@id="stream-panel"]/div[1]/ol/li[{article_counter}]/div'
                     )
                     # self.consolidate_elements(element)
-                    self.driver.execute_script("window.scrollBy(0, 500);")
-                    time.sleep(1.4)
-                except NoSuchElementException:
-                    time.sleep(5)
-                    element = self.driver.find_element(
-                        By.XPATH,
-                        f'//*[@id="stream-panel"]/div[1]/ol/li[{article_counter}]/div'
-                    )
-                    self.consolidate_elements(element)
+                    self.driver.execute_script("window.scrollBy(0, 600);")
+                    time.sleep(2)
+                except Exception:
+                    print(f"Error during the extraction of the element {article_counter}.")
+                    continue
                 elements.append(element)
                 print(article_counter)
                 article_counter += 1
@@ -156,36 +176,6 @@ class AutomationTest:
         description_count = description.count(phrase)
         return title_count + description_count
 
-    def consolidate_elements(self, element):
-        elements_dict = {}
-        title = element.find_element(By.TAG_NAME, 'h2').text
-        date = element.find_element(
-            By.XPATH,
-            '/html/body/div/div[2]/main/section/div[2]/'
-            'div/section/div[1]/ol/li[1]/div/div[2]/span'
-        ).text
-        description = element.find_element(By.TAG_NAME, 'p').text
-        image = element.find_element(
-            By.TAG_NAME, 'img'
-            ).get_attribute('src')
-        phrase_count = self.count_phrase_in_article(
-            title,
-            description
-            ) if title or description else 0
-
-        money_format = self.identify_money_format(
-            title,
-            description
-            )
-        elements_dict['title'] = title
-        elements_dict['date'] = date
-        elements_dict['description'] = description
-        elements_dict['image'] = image
-        elements_dict['phrase_count'] = phrase_count
-        elements_dict['money_format'] = money_format
-        self.data.append(elements_dict)
-        return self.data
-
     def create_excel_file(self, article_information):
         """This method will create an excel file with
         the results of the search."""
@@ -193,7 +183,7 @@ class AutomationTest:
         df.to_excel('results.xlsx', index=False)
         return True
 
-    def parse_all_elements(self, elements):
+    def extract_needed_information(self, elements):
         result = []
         for element in elements:
             elements_dict = {}
@@ -202,11 +192,10 @@ class AutomationTest:
             except Exception:
                 title = None
             try:
-                date = element.find_element(
-                    By.XPATH,
-                    '/html/body/div/div[2]/main/section/div[2]/'
-                    'div/section/div[1]/ol/li[1]/div/div[2]/span'
-                ).text
+                date = element.find_elements(
+                    By.TAG_NAME,
+                    "span"
+                    )[-1].text
             except Exception:
                 date = None
             try:
@@ -276,9 +265,29 @@ class AutomationTest:
 if __name__ == '__main__':
     # To do: Manage exceptions for inputs.
     # To do: Try border cases.
+    automation = AutomationTest()
+    section_list = automation.get_section_list()
+    while True:
+        section = input(f'Enter the section to search from the following options {section_list}: ')
+        if section not in section_list:
+            print("Make sure you enter a valid section (It must be in the list and its case sensitive.)")
+        else:
+            break
+    while True:
+        months = input('Enter the number of months to search: ')
+        if months.isdigit():
+            months = int(months)
+            if months <= 12:
+                break
+            else:
+                print('Invalid input. Please enter a value less than or equal to 12.')
+        else:
+            print('Invalid input. Please enter a valid integer.')
+    search_phrase = input('Enter the search phrase: ')
+
     automation = AutomationTest(
-        section='World',
-        months=1,
-        search_phrase='Trump'
+        section=section,
+        months=months,
+        search_phrase=search_phrase
     )
     automation.execute()
