@@ -49,7 +49,7 @@ def create_excel_file(article_information):
     """This method will create an excel file with
     the results of the search."""
     df = pd.DataFrame(article_information)
-    df.to_excel('results.xlsx', index=False)
+    df.to_excel('./output/results.xlsx', index=False)
     return True
 
 
