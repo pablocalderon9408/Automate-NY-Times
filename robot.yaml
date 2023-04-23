@@ -5,6 +5,8 @@ tasks:
   # Task names here are used when executing the bots, so renaming these is recommended.
   Run Python:
     shell: python task.py
+output:
+  - output/
 
 condaConfigFile: conda.yaml
 
@@ -14,7 +16,7 @@ environmentConfigs:
   - environment_darwin_amd64_freeze.yaml
   - conda.yaml
 
-artifactsDir: output  
+artifactsDir: artifacts
 
 PATH:
   - .
