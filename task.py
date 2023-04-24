@@ -10,20 +10,10 @@ from utilities import (
     create_excel_file
 )
 
-# from RPA.Robocloud.Secrets import get_secret
-
-# Get parameters from Robocloud Secrets.
-# secrets = json.loads(get_secret("work-item-secrets"))
-# variables = secrets["variables"]
-
-# Initialize variables for further use.
-# months = variables["months"]
-# section = variables["section"]
-# search_phrase = variables["search_phrase"]
-
 months = 1
 section = "Travel"
 search_phrase = "python"
+path_to_file = "output/"
 browser_lib = Selenium()
 
 
@@ -75,7 +65,8 @@ def extract_elements():
     return elements
 
 
-def extract_needed_information(elements):
+def extract_needed_information(path_to_file):
+    elements = extract_elements()
     result = []
     for element in elements:
         elements_dict = {}
@@ -124,32 +115,18 @@ def extract_needed_information(elements):
         elements_dict['phrase_count'] = phrase_count
         elements_dict['money_format'] = money_format
         result.append(elements_dict)
-    create_excel_file(article_information=result)
+    create_excel_file(article_information=result, path_to_file=path_to_file)
     return result
 
-# def search_for(term):
-#     input_field = "css:input"
-#     browser_lib.input_text(input_field, term)
-#     browser_lib.press_keys(input_field, "ENTER")
-
-
-# def store_screenshot(filename):
-#     browser_lib.screenshot(filename=filename)
-
-
-# Define a main() function that calls the other functions in order:
 def main():
     try:
         open_the_website(
             url='https://www.nytimes.com/',
             section=section
             )
-        extract_needed_information(extract_elements())
+        extract_needed_information(path_to_file=path_to_file)
     finally:
         browser_lib.close_all_browsers()
 
-
-# Call the main() function, checking that we are running
-# as a stand-alone script:
 if __name__ == "__main__":
     main()

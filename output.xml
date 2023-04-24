@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 5.0.1 (Python 3.9.13 on darwin)" generated="20230424 13:59:32.612" rpa="true" schemaversion="3">
+<suite id="s1" name="Tasks" source="/Users/pablocalderonsalazar/Desktop/Automate-NY-Times/tasks.robot">
+<test id="s1-t1" name="Obtain news information" line="93">
+<kw name="Open the website">
+<arg>${url}</arg>
+<arg>${section}</arg>
+<kw name="Open The Website" library="task">
+<arg>${url}</arg>
+<arg>${section}</arg>
+<msg timestamp="20230424 13:59:34.169" level="INFO">Creating an instance of the Chrome WebDriver.</msg>
+<msg timestamp="20230424 13:59:34.184" level="INFO">====== WebDriver manager ======</msg>
+<msg timestamp="20230424 13:59:34.886" level="INFO">Creating an instance of the Chrome WebDriver.</msg>
+<msg timestamp="20230424 13:59:42.315" level="INFO">Created Chrome browser with arguments: --disable-dev-shm-usage --disable-web-security --allow-running-insecure-content --no-sandbox</msg>
+<msg timestamp="20230424 13:59:42.320" level="INFO" html="true">&lt;p&gt;Attempted combinations:&lt;/p&gt;&lt;div class="doc"&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Browser&lt;/th&gt;&lt;th&gt;Download&lt;/th&gt;&lt;th&gt;Error&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Chrome&lt;/td&gt;&lt;td&gt;False&lt;/td&gt;&lt;td&gt;Message: 'chromedriver' executable needs to be in PATH. Please see https://chromedriver.chromium.org/home
+&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Chrome&lt;/td&gt;&lt;td&gt;True&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</msg>
+<msg timestamp="20230424 13:59:42.320" level="INFO">Opening url 'https://www.nytimes.com/section/travel'</msg>
+<status status="PASS" starttime="20230424 13:59:34.169" endtime="20230424 14:00:06.515"/>
+</kw>
+<status status="PASS" starttime="20230424 13:59:34.168" endtime="20230424 14:00:06.518"/>
+</kw>
+<kw name="Extract news information">
+<kw name="Extract Needed Information" library="task">
+<arg>${path_to_file}</arg>
+<msg timestamp="20230424 14:00:47.547" level="INFO">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35</msg>
+<status status="PASS" starttime="20230424 14:00:06.521" endtime="20230424 14:00:47.548"/>
+</kw>
+<status status="PASS" starttime="20230424 14:00:06.520" endtime="20230424 14:00:47.549"/>
+</kw>
+<status status="PASS" starttime="20230424 13:59:34.168" endtime="20230424 14:00:47.549"/>
+</test>
+<doc>This robot returns an excel file with information about the news retrieved.
+The information is stored in a table with the following columns:
+"Date", "Title", "Source", "Link", "Summary", "Image"</doc>
+<status status="PASS" starttime="20230424 13:59:32.617" endtime="20230424 14:00:47.550"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tasks</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Tasks">Tasks</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
