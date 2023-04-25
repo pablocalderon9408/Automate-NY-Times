@@ -18,10 +18,11 @@ Open the website
     task.open_the_website    ${url}    ${section}
 
 Extract news information
+    [Arguments]    ${path_to_file}
     task.extract_needed_information    ${path_to_file}
 
 
 *** Tasks ***
 Obtain news information
     Open the website    ${url}    ${section}
-    Extract news information
+    Extract news information    ${path_to_file}
